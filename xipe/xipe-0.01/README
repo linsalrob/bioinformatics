@@ -1,0 +1,44 @@
+				xipe
+
+	Software for the statistical differentiation of
+	subsystems in metagenomes.
+
+(c) 2005 Beltran Rodriguez-Brito, Pat MacNarnie and Robert Edwards
+Written by Beltran Rodriguez-Brito with contributions by Pat MacNarnie and Robert Edwards
+
+
+OVERVIEW
+
+This software is for the determination of statistically different subsystems as described in the paper by Rodriguez-Brito, Rohwer, and Edwards, "A statistical approach for metagenome comparisons".
+
+The program consists of four separate pieces. A C program that performs the calculations (xipe) and two perl programs (xipe2.perl and xipe3.perl) that manipulate the data. There is a wrapper (xipe.pl) that just takes input files and runs each of xipe, xipe2 and xipe3 in the correct order. This program also handles the temporary files that are created (see below).
+
+TO USE THIS SOFTWARE
+
+Run make to make the program xipe. If this does not compile on your system check that you have cc installed correctly.
+
+Edit the program xipe.pl to set the correct location of the executable if you move them.
+
+The input requires two separate files, one from each metagenome. The files should contain three tab-separated columns, each of which should only contain numbers. We found it most convenient to make a key file and convert our data too and from numeric format for the manipulations. The columns we generally use are classification, subssystem, and protein. However the only critical column is the middle one, the subsystem column.
+
+The file names should approximately represent what you want the output to be, since that will be the basis of the labels of what came from where.
+
+So, armed with two input files, you can run a command like this:
+
+xipe.pl -f file1 -g file2 -o file1.file2
+
+You can also set the number of repeats, the number of proteins that are sampled, and the confidence interval using the xipe.pl wrapper.
+
+The output will be a file containing the statistically significant subsystems (from the middle column) and the file in which they are most prevalent. From there you are on your own!!
+
+For more information please contact Rob Edwards (redwards@salmonella.org).
+
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program in the file COPYING; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+Released as part of the xipe package as supplemental online material to "A statistical approach for metagenome comparisons" by Beltran Rodriguez-Brito, Forest Rohwer, and Robert A. Edwards.
+

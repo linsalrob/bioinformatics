@@ -1,0 +1,7 @@
+~/beltran/xipe -r 20000 -s $* \
+	-f rawblack -g rawred \
+	-o soudaner20s110medians.txt \
+	-p soudaner20s110ranges.txt
+~/beltran/xipe2.perl soudaner20s110medians.txt > medians
+~/beltran/xipe2.perl soudaner20s110ranges.txt  > ranges
+~/beltran/xipe3.perl medians ranges 20000 0.98 rawblack rawred
