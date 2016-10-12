@@ -1,0 +1,78 @@
+#!/usr/bin/perl -w
+
+# another blast script
+
+my $usage = "blast [-n,p,x,tn,s,tx] [-0] database file [blast options]
+	-n	blastn		nt query, nt database
+	-p	blastp		protein query, protein database
+	-x	blastx		nt query, protein database
+	-tn	tblastn		protein query, nt database
+	-s	psitblastn	protein query, nt database psi-blast
+	-tx	tblastx		nt query, nt database
+	
+	-0	skip responses that don't match anything
+";
+
+
+my $program=shift || die $usage;
+my $skipzero=0; 
+if ($program eq "-n") {$program="blastn"}
+elsif ($program eq "-p") {$program="blastp"}
+elsif ($program eq "-x") {$program="blastx"}
+elsif ($program eq "-tn") {$program="tblastn"}
+elsif ($program eq "-s") {$program="psitblastn"}
+elsif ($program eq "-tx") {$program="tblastx"}
+else {die $usage}
+
+my $database=shift || die $usage;
+if ($database eq "-0") {
+ $skipzero=1;
+ $database=shift || die $usage;
+}
+
+my $file=shift || die $usage;
+my $options=join (" ", @ARGV);
+
+
+#unless (-e $file && -e "/clusterfs/home/rob/bin/blastalldir/data/$database") {die "$file or /clusterfs/home/rob/bin/blastalldir/data/$database doesn't exist"}
+
+my %output; my %input;
+if (-d $file) {
+ # $file is a directory
+ my $outputdir="$file.$program.$database";
+
+ my $count;
+ while (-e "$outputdir") {$count++; $outputdir="$file.$program.$database.$count"}
+ 
+ mkdir "$outputdir", 0755;
+ 
+ opendir(DIR, $file) || die "Can't read $file";
+ while (my $f  =readdir(DIR)) {
+  next if ($f =~ /^\./);
+  push (@input, "$file/$f");
+  $output{"$file/$f"}="$outputdir/$f";
+ }
+}
+elsif (-T $file) {
+ ## need to call separate databases
+ push (@input, $file);
+ $output{$file}="$file.$program.$database";
+ }
+
+
+foreach my $f (@input) {
+ my @results=`blastall -p $program -d /clusterfs/data/$database -i $f $options`;
+ my @none=grep /No hits found/, @results;
+ if ($none[0] && $skipzero) {
+  print STDERR "$f skipped. No hits found\n";
+  next;
+ }
+ open (OUT, ">$output{$f}") || die "Can't open $output{$f} for writing\n";
+ print OUT @results;
+ close OUT;
+}
+
+print STDERR "Done in ", time-$^T, " seconds\n";
+
+ 
+ 
